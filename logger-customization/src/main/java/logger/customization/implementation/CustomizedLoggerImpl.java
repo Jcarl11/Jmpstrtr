@@ -2,10 +2,11 @@ package logger.customization.implementation;
 
 import ch.qos.logback.classic.Logger;
 import logger.customization.repository.interfaces.CustomizationLogger;
+import logger.utils.loggerEnums.LoggerImpl;
 
 public class CustomizedLoggerImpl implements CustomizationLogger {
 
-	private BaseLoggerBuilder<?, ? extends Logger> logger;
+	private BaseLoggerBuilder<?, ? extends Logger> logger = LoggerFactory.getLogger(LoggerImpl.BASICLOGGERIMPL);
 
 	public CustomizedLoggerImpl( BaseLoggerBuilder<?, ? extends Logger> logger ) {
 		this.logger = logger;
