@@ -6,18 +6,18 @@ import logger.utils.constants.LoggerConstants;
 
 public abstract class BaseLoggerBuilder<E, T> {
 
-	protected static String LOG_PATTERN = LoggerConstants.LOG_PATTERN;
-	protected static String LOG_LOCATION_DEV = LoggerConstants.LOGS_LOCATION_DEV;
-	protected static String LOG_LOCATION_INFORMATIONAL = LoggerConstants.LOGS_LOCATION_INFORMATIONAL;
-	protected static String LOG_LOCATION_FLAWS = LoggerConstants.LOGS_LOCATION_FLAW;
-	protected static String LOG_LOCATION_TRACES = LoggerConstants.LOGS_LOCATION_TRACE;
-	protected static String MAX_FILE_SIZE = "5MB";
-	protected static String TOTAL_CAP_SIZE = "50MB";
-	protected static int MAX_HISTORY = 30; // 30 days
-	protected static String INFORMATIONAL_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
+	protected String LOG_PATTERN = LoggerConstants.LOG_PATTERN;
+	protected String LOG_LOCATION_DEV = LoggerConstants.LOGS_LOCATION_DEV;
+	protected String LOG_LOCATION_INFORMATIONAL = LoggerConstants.LOGS_LOCATION_INFORMATIONAL;
+	protected String LOG_LOCATION_FLAWS = LoggerConstants.LOGS_LOCATION_FLAW;
+	protected String LOG_LOCATION_TRACES = LoggerConstants.LOGS_LOCATION_TRACE;
+	protected String MAX_FILE_SIZE = "5MB";
+	protected String TOTAL_CAP_SIZE = "50MB";
+	protected int MAX_HISTORY = 30; // 30 days
+	protected String INFORMATIONAL_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
 		LoggerConstants.LOGS_LOCATION_INFORMATIONAL, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_INFO);
 	
-	protected static String FLAWS_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
+	protected String FLAWS_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
 		LoggerConstants.LOGS_LOCATION_FLAW, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_FLAWS);
 
 	abstract public E initializeLogger();
