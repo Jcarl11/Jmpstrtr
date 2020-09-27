@@ -5,10 +5,9 @@ import logger.customization.repository.interfaces.CustomizationLogger;
 
 public class CustomizedLoggerImpl implements CustomizationLogger {
 
-	// TODO: Implement dependency injection here..
-	private BaseLoggerBuilder<?> logger;
+	private BaseLoggerBuilder<?,? extends Logger> logger;
 
-	public CustomizedLoggerImpl( BaseLoggerBuilder<?> logger ) {
+	public CustomizedLoggerImpl( BaseLoggerBuilder<?,? extends Logger> logger ) {
 		this.logger = logger;
 	}
 
