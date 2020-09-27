@@ -10,7 +10,7 @@ public class LoggerFactory {
 		switch (loggerImpl) {
 		case BASICLOGGERIMPL:
 			return BasicLoggerImpl.getInstance().initializeLogger().initializeFilter().initializeEncoder()
-				.initializeAppender();
+				.initializeAppender().assemble();
 		default:
 			try {
 				throw new Exception("Logger implementation not found");
