@@ -7,8 +7,7 @@ import ch.qos.logback.core.spi.FilterReply;
 
 public class InformationalFilter extends Filter<ILoggingEvent> {
 
-	private Level level;
-	private String logger;
+	Level level;
 
 	@Override
 	public FilterReply decide(ILoggingEvent event) {
@@ -18,15 +17,11 @@ public class InformationalFilter extends Filter<ILoggingEvent> {
 
 	@Override
 	public void start() {
-		if (this.level != null && this.logger != null) super.start();
+		if (this.level != null) super.start();
 	}
 
-	public void setLevel(Level level) {
-		this.level = level;
-	}
-
-	public void setLogger(String logger) {
-		this.logger = logger;
+	public void setLevel(String level) {
+		this.level = Level.toLevel(level);
 	}
 
 }
