@@ -14,8 +14,11 @@ public abstract class BaseLoggerBuilder<E, T> {
 	protected static String MAX_FILE_SIZE = "5MB";
 	protected static String TOTAL_CAP_SIZE = "50MB";
 	protected static int MAX_HISTORY = 30; // 30 days
-	protected static String FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
+	protected static String INFORMATIONAL_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
 		LoggerConstants.LOGS_LOCATION_INFORMATIONAL, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_INFO);
+	
+	protected static String FLAWS_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
+		LoggerConstants.LOGS_LOCATION_FLAW, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_FLAWS);
 
 	abstract public E initializeLogger();
 	abstract public E initializePolicy();
