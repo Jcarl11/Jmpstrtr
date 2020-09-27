@@ -1,6 +1,8 @@
 package logger.customization.implementation;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import logger.utils.constants.LoggerConstants;
 
@@ -20,6 +22,8 @@ public abstract class BaseLoggerBuilder<E, T> {
 		LoggerConstants.LOGS_LOCATION_FLAW, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_FLAWS);
 	protected String TRACE_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
 		LoggerConstants.LOGS_LOCATION_TRACE, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_TRACES);
+	protected String DEV_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
+		LoggerConstants.LOGS_LOCATION_DEV, LoggerConstants.LOGS_LABEL_DEV, getTimeStamp());
 
 	abstract public E initializeLogger();
 	abstract public E initializePolicy();
@@ -34,6 +38,11 @@ public abstract class BaseLoggerBuilder<E, T> {
 		new File(LOG_LOCATION_INFORMATIONAL).mkdirs();
 		new File(LOG_LOCATION_FLAWS).mkdirs();
 		new File(LOG_LOCATION_TRACES).mkdirs();
+	}
+	
+	private String getTimeStamp() {
+		Calendar currentDate = Calendar.getInstance();
+		return new SimpleDateFormat("yyyyMMddHHmmss").format(currentDate.getTime());
 	}
 
 }
