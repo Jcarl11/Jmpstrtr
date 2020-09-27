@@ -6,11 +6,13 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.filter.LevelFilter;
 import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
+import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.util.FileSize;
 import logger.customization.custom.filters.InformationalFilter;
 
@@ -21,11 +23,13 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	protected ConsoleAppender<ILoggingEvent> consoleAppender;
 	protected RollingFileAppender<ILoggingEvent> informationalAppender;
 	protected RollingFileAppender<ILoggingEvent> flawAppender;
+	protected RollingFileAppender<ILoggingEvent> traceAppender;
 	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> informationalRollingPolicy;
 	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> flawsRollingPolicy;
 	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> traceRollingPolicy;
 	protected ThresholdFilter consoleAppenderFilter;
 	protected ThresholdFilter flawsAppenderFilter;
+	protected LevelFilter traceAppenderFilter;
 	protected InformationalFilter informationalFilter;
 	protected PatternLayoutEncoder patternLayoutEncoder;
 	protected Level consoleAppenderFilterLevel = Level.DEBUG;
@@ -65,6 +69,12 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		flawsRollingPolicy.setMaxFileSize(FileSize.valueOf(MAX_FILE_SIZE));
 		flawsRollingPolicy.setMaxHistory(MAX_HISTORY);
 		flawsRollingPolicy.setTotalSizeCap(FileSize.valueOf(TOTAL_CAP_SIZE));
+		traceRollingPolicy = new SizeAndTimeBasedRollingPolicy<ILoggingEvent>();
+		traceRollingPolicy.setContext(loggerCtx);
+		traceRollingPolicy.setFileNamePattern(TRACE_FILE_PATTERN);
+		traceRollingPolicy.setMaxFileSize(FileSize.valueOf(MAX_FILE_SIZE));
+		traceRollingPolicy.setMaxHistory(MAX_HISTORY);
+		traceRollingPolicy.setTotalSizeCap(FileSize.valueOf(TOTAL_CAP_SIZE));
 		return this;
 	}
 
@@ -86,6 +96,11 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		flawsAppenderFilter = new ThresholdFilter();
 		flawsAppenderFilter.setContext(loggerCtx);
 		flawsAppenderFilter.setLevel(Level.WARN.levelStr);
+		traceAppenderFilter = new LevelFilter();
+		traceAppenderFilter.setContext(loggerCtx);
+		traceAppenderFilter.setLevel(Level.TRACE);
+		traceAppenderFilter.setOnMatch(FilterReply.ACCEPT);
+		traceAppenderFilter.setOnMismatch(FilterReply.DENY);
 		return this;
 	}
 
@@ -105,6 +120,11 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		flawAppender.addFilter(flawsAppenderFilter);
 		flawAppender.setEncoder(patternLayoutEncoder);
 		flawAppender.setRollingPolicy(flawsRollingPolicy);
+		traceAppender = new RollingFileAppender<ILoggingEvent>();
+		traceAppender.setContext(loggerCtx);
+		traceAppender.addFilter(traceAppenderFilter);
+		traceAppender.setEncoder(patternLayoutEncoder);
+		traceAppender.setRollingPolicy(traceRollingPolicy);
 		return this;
 	}
 
@@ -112,16 +132,20 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	public BasicLoggerImpl assemble() {
 		informationalRollingPolicy.start();
 		flawsRollingPolicy.start();
+		traceRollingPolicy.start();
 		patternLayoutEncoder.start();
 		consoleAppenderFilter.start();
 		informationalFilter.start();
 		flawsAppenderFilter.start();
+		traceAppenderFilter.start();
 		consoleAppender.start();
 		informationalAppender.start();
 		flawAppender.start();
+		traceAppender.start();
 		logger.addAppender(consoleAppender);
 		logger.addAppender(informationalAppender);
 		logger.addAppender(flawAppender);
+		logger.addAppender(traceAppender);
 		return this;
 	}
 
