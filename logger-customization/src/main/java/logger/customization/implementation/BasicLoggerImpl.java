@@ -22,7 +22,8 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	protected RollingFileAppender<ILoggingEvent> informationalAppender;
 	protected RollingFileAppender<ILoggingEvent> flawAppender;
 	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> sizeAndTimeBasedRollingPolicy;
-	protected ThresholdFilter thresholdFilter;
+	protected ThresholdFilter consoleAppenderFilter;
+	protected ThresholdFilter flawsAppenderFilter;
 	protected InformationalFilter informationalFilter;
 	protected PatternLayoutEncoder patternLayoutEncoder;
 	protected Level consoleAppenderFilterLevel = Level.DEBUG;
@@ -69,11 +70,14 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 
 	@Override
 	public BasicLoggerImpl initializeFilter() {
-		thresholdFilter = new ThresholdFilter();
-		thresholdFilter.setContext(loggerCtx);
-		thresholdFilter.setLevel(consoleAppenderFilterLevel.levelStr);
+		consoleAppenderFilter = new ThresholdFilter();
+		consoleAppenderFilter.setContext(loggerCtx);
+		consoleAppenderFilter.setLevel(consoleAppenderFilterLevel.levelStr);
 		informationalFilter = new InformationalFilter();
 		informationalFilter.setContext(loggerCtx);
+		flawsAppenderFilter = new ThresholdFilter();
+		flawsAppenderFilter.setContext(loggerCtx);
+		flawsAppenderFilter.setLevel(Level.WARN.levelStr);
 		return this;
 	}
 
@@ -81,12 +85,17 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	public BasicLoggerImpl initializeAppender() {
 		consoleAppender = new ConsoleAppender<ILoggingEvent>();
 		consoleAppender.setContext(loggerCtx);
-		consoleAppender.addFilter(thresholdFilter);
+		consoleAppender.addFilter(consoleAppenderFilter);
 		consoleAppender.setEncoder(patternLayoutEncoder);
 		informationalAppender = new RollingFileAppender<ILoggingEvent>();
 		informationalAppender.setContext(loggerCtx);
 		informationalAppender.addFilter(informationalFilter);
 		informationalAppender.setEncoder(patternLayoutEncoder);
+		flawAppender = new RollingFileAppender<ILoggingEvent>();
+		flawAppender.setContext(loggerCtx);
+		flawAppender.addFilter(flawsAppenderFilter);
+		flawAppender.setEncoder(patternLayoutEncoder);
+		
 		return this;
 	}
 
@@ -94,12 +103,15 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	public BasicLoggerImpl assemble() {
 		sizeAndTimeBasedRollingPolicy.start();
 		patternLayoutEncoder.start();
-		thresholdFilter.start();
+		consoleAppenderFilter.start();
 		informationalFilter.start();
+		flawsAppenderFilter.start();
 		consoleAppender.start();
 		informationalAppender.start();
+		flawAppender.start();
 		logger.addAppender(consoleAppender);
 		logger.addAppender(informationalAppender);
+		logger.addAppender(flawAppender);
 		return this;
 	}
 
