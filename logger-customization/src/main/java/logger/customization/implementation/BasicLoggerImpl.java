@@ -24,16 +24,22 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	protected RollingFileAppender<ILoggingEvent> informationalAppender;
 	protected RollingFileAppender<ILoggingEvent> flawAppender;
 	protected RollingFileAppender<ILoggingEvent> traceAppender;
+	protected RollingFileAppender<ILoggingEvent> devAppender;
 	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> informationalRollingPolicy;
 	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> flawsRollingPolicy;
 	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> traceRollingPolicy;
+	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> devRollingPolicy;
 	protected ThresholdFilter consoleAppenderFilter;
 	protected ThresholdFilter flawsAppenderFilter;
 	protected LevelFilter traceAppenderFilter;
+	protected ThresholdFilter devAppenderFilter;
 	protected InformationalFilter informationalFilter;
 	protected PatternLayoutEncoder patternLayoutEncoder;
 	protected Level consoleAppenderFilterLevel = Level.DEBUG;
 	protected Level loggerLevel = Level.ALL;
+	protected String CUSTOM_MAX_FILE_SIZE = "1MB";
+	protected int CUSTOM_MAX_HISTORY = 3;
+	protected String CUSTOM_TOTAL_CAP_SIZE = "10MB";
 	private static BasicLoggerImpl instance = null;
 
 	private BasicLoggerImpl() {
@@ -75,6 +81,12 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		traceRollingPolicy.setMaxFileSize(FileSize.valueOf(MAX_FILE_SIZE));
 		traceRollingPolicy.setMaxHistory(MAX_HISTORY);
 		traceRollingPolicy.setTotalSizeCap(FileSize.valueOf(TOTAL_CAP_SIZE));
+		devRollingPolicy = new SizeAndTimeBasedRollingPolicy<ILoggingEvent>();
+		devRollingPolicy.setContext(loggerCtx);
+		devRollingPolicy.setFileNamePattern(DEV_FILE_PATTERN);
+		devRollingPolicy.setMaxFileSize(FileSize.valueOf(CUSTOM_MAX_FILE_SIZE));
+		devRollingPolicy.setMaxHistory(CUSTOM_MAX_HISTORY);
+		devRollingPolicy.setTotalSizeCap(FileSize.valueOf(CUSTOM_TOTAL_CAP_SIZE));
 		return this;
 	}
 
@@ -101,6 +113,9 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		traceAppenderFilter.setLevel(Level.TRACE);
 		traceAppenderFilter.setOnMatch(FilterReply.ACCEPT);
 		traceAppenderFilter.setOnMismatch(FilterReply.DENY);
+		devAppenderFilter = new ThresholdFilter();
+		devAppenderFilter.setContext(loggerCtx);
+		devAppenderFilter.setLevel(Level.DEBUG.levelStr);
 		return this;
 	}
 
@@ -125,6 +140,11 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		traceAppender.addFilter(traceAppenderFilter);
 		traceAppender.setEncoder(patternLayoutEncoder);
 		traceAppender.setRollingPolicy(traceRollingPolicy);
+		devAppender = new RollingFileAppender<ILoggingEvent>();
+		devAppender.setContext(loggerCtx);
+		devAppender.addFilter(devAppenderFilter);
+		devAppender.setEncoder(patternLayoutEncoder);
+		devAppender.setRollingPolicy(devRollingPolicy);
 		return this;
 	}
 
@@ -133,19 +153,23 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		informationalRollingPolicy.start();
 		flawsRollingPolicy.start();
 		traceRollingPolicy.start();
+		devRollingPolicy.start();
 		patternLayoutEncoder.start();
 		consoleAppenderFilter.start();
 		informationalFilter.start();
 		flawsAppenderFilter.start();
 		traceAppenderFilter.start();
+		devAppenderFilter.start();
 		consoleAppender.start();
 		informationalAppender.start();
 		flawAppender.start();
 		traceAppender.start();
+		devAppender.start();
 		logger.addAppender(consoleAppender);
 		logger.addAppender(informationalAppender);
 		logger.addAppender(flawAppender);
 		logger.addAppender(traceAppender);
+		logger.addAppender(devAppender);
 		return this;
 	}
 
