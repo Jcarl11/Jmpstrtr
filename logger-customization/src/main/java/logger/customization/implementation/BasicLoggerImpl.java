@@ -11,7 +11,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
+import ch.qos.logback.core.util.FileSize;
 import logger.customization.custom.filters.InformationalFilter;
+import logger.utils.constants.LoggerConstants;
 
 public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> {
 
@@ -28,6 +30,7 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	private static BasicLoggerImpl instance = null;
 
 	private BasicLoggerImpl() {
+		super();
 	}
 
 	public static synchronized BasicLoggerImpl getInstance() {
@@ -46,6 +49,17 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	}
 
 	@Override
+	public BasicLoggerImpl initializePolicy() {
+		sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<ILoggingEvent>();
+		sizeAndTimeBasedRollingPolicy.setContext(loggerCtx);
+		sizeAndTimeBasedRollingPolicy.setFileNamePattern(FILE_PATTERN);
+		sizeAndTimeBasedRollingPolicy.setMaxFileSize(FileSize.valueOf(MAX_FILE_SIZE));
+		sizeAndTimeBasedRollingPolicy.setMaxHistory(MAX_HISTORY);
+		sizeAndTimeBasedRollingPolicy.setTotalSizeCap(FileSize.valueOf(TOTAL_CAP_SIZE));
+		return this;
+	}
+
+	@Override
 	public BasicLoggerImpl initializeEncoder() {
 		patternLayoutEncoder = new PatternLayoutEncoder();
 		patternLayoutEncoder.setContext(loggerCtx);
@@ -58,6 +72,8 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		thresholdFilter = new ThresholdFilter();
 		thresholdFilter.setContext(loggerCtx);
 		thresholdFilter.setLevel(consoleAppenderFilterLevel.levelStr);
+		informationalFilter = new InformationalFilter();
+		informationalFilter.setContext(loggerCtx);
 		return this;
 	}
 
@@ -67,15 +83,28 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		consoleAppender.setContext(loggerCtx);
 		consoleAppender.addFilter(thresholdFilter);
 		consoleAppender.setEncoder(patternLayoutEncoder);
+		rollingFileAppender = new RollingFileAppender<ILoggingEvent>();
+		rollingFileAppender.setContext(loggerCtx);
+		rollingFileAppender.addFilter(informationalFilter);
+		rollingFileAppender.setEncoder(patternLayoutEncoder);
+		return this;
+	}
+
+	@Override
+	public BasicLoggerImpl assemble() {
+		sizeAndTimeBasedRollingPolicy.start();
+		patternLayoutEncoder.start();
+		thresholdFilter.start();
+		informationalFilter.start();
+		consoleAppender.start();
+		rollingFileAppender.start();
+		logger.addAppender(consoleAppender);
+		logger.addAppender(rollingFileAppender);
 		return this;
 	}
 
 	@Override
 	public Logger logger() {
-		patternLayoutEncoder.start();
-		thresholdFilter.start();
-		consoleAppender.start();
-		logger.addAppender(consoleAppender);
 		return this.logger;
 	}
 
