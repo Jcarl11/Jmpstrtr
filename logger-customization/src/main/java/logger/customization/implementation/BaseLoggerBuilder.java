@@ -16,9 +16,10 @@ public abstract class BaseLoggerBuilder<E, T> {
 	protected int MAX_HISTORY = 30; // 30 days
 	protected String INFORMATIONAL_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
 		LoggerConstants.LOGS_LOCATION_INFORMATIONAL, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_INFO);
-	
 	protected String FLAWS_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
 		LoggerConstants.LOGS_LOCATION_FLAW, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_FLAWS);
+	protected String TRACE_FILE_PATTERN = String.format(LoggerConstants.FILE_NAME_PATTERN,
+		LoggerConstants.LOGS_LOCATION_TRACE, LoggerConstants.APP_NAME, LoggerConstants.LOGS_LABEL_TRACES);
 
 	abstract public E initializeLogger();
 	abstract public E initializePolicy();
