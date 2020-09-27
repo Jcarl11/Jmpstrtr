@@ -21,7 +21,9 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 	protected ConsoleAppender<ILoggingEvent> consoleAppender;
 	protected RollingFileAppender<ILoggingEvent> informationalAppender;
 	protected RollingFileAppender<ILoggingEvent> flawAppender;
-	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> sizeAndTimeBasedRollingPolicy;
+	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> informationalRollingPolicy;
+	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> flawsRollingPolicy;
+	protected SizeAndTimeBasedRollingPolicy<ILoggingEvent> traceRollingPolicy;
 	protected ThresholdFilter consoleAppenderFilter;
 	protected ThresholdFilter flawsAppenderFilter;
 	protected InformationalFilter informationalFilter;
@@ -51,12 +53,18 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 
 	@Override
 	public BasicLoggerImpl initializePolicy() {
-		sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<ILoggingEvent>();
-		sizeAndTimeBasedRollingPolicy.setContext(loggerCtx);
-		sizeAndTimeBasedRollingPolicy.setFileNamePattern(INFORMATIONAL_FILE_PATTERN);
-		sizeAndTimeBasedRollingPolicy.setMaxFileSize(FileSize.valueOf(MAX_FILE_SIZE));
-		sizeAndTimeBasedRollingPolicy.setMaxHistory(MAX_HISTORY);
-		sizeAndTimeBasedRollingPolicy.setTotalSizeCap(FileSize.valueOf(TOTAL_CAP_SIZE));
+		informationalRollingPolicy = new SizeAndTimeBasedRollingPolicy<ILoggingEvent>();
+		informationalRollingPolicy.setContext(loggerCtx);
+		informationalRollingPolicy.setFileNamePattern(INFORMATIONAL_FILE_PATTERN);
+		informationalRollingPolicy.setMaxFileSize(FileSize.valueOf(MAX_FILE_SIZE));
+		informationalRollingPolicy.setMaxHistory(MAX_HISTORY);
+		informationalRollingPolicy.setTotalSizeCap(FileSize.valueOf(TOTAL_CAP_SIZE));
+		flawsRollingPolicy = new SizeAndTimeBasedRollingPolicy<ILoggingEvent>();
+		flawsRollingPolicy.setContext(loggerCtx);
+		flawsRollingPolicy.setFileNamePattern(FLAWS_FILE_PATTERN);
+		flawsRollingPolicy.setMaxFileSize(FileSize.valueOf(MAX_FILE_SIZE));
+		flawsRollingPolicy.setMaxHistory(MAX_HISTORY);
+		flawsRollingPolicy.setTotalSizeCap(FileSize.valueOf(TOTAL_CAP_SIZE));
 		return this;
 	}
 
@@ -91,17 +99,19 @@ public class BasicLoggerImpl extends BaseLoggerBuilder<BasicLoggerImpl, Logger> 
 		informationalAppender.setContext(loggerCtx);
 		informationalAppender.addFilter(informationalFilter);
 		informationalAppender.setEncoder(patternLayoutEncoder);
+		informationalAppender.setRollingPolicy(informationalRollingPolicy);
 		flawAppender = new RollingFileAppender<ILoggingEvent>();
 		flawAppender.setContext(loggerCtx);
 		flawAppender.addFilter(flawsAppenderFilter);
 		flawAppender.setEncoder(patternLayoutEncoder);
-		
+		flawAppender.setRollingPolicy(flawsRollingPolicy);
 		return this;
 	}
 
 	@Override
 	public BasicLoggerImpl assemble() {
-		sizeAndTimeBasedRollingPolicy.start();
+		informationalRollingPolicy.start();
+		flawsRollingPolicy.start();
 		patternLayoutEncoder.start();
 		consoleAppenderFilter.start();
 		informationalFilter.start();
