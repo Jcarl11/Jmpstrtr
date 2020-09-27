@@ -5,9 +5,9 @@ import logger.customization.repository.interfaces.CustomizationLogger;
 
 public class CustomizedLoggerImpl implements CustomizationLogger {
 
-	private BaseLoggerBuilder<?,? extends Logger> logger;
+	private BaseLoggerBuilder<?, ? extends Logger> logger;
 
-	public CustomizedLoggerImpl( BaseLoggerBuilder<?,? extends Logger> logger ) {
+	public CustomizedLoggerImpl( BaseLoggerBuilder<?, ? extends Logger> logger ) {
 		this.logger = logger;
 	}
 
