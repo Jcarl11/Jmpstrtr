@@ -1,6 +1,5 @@
 package logger.customization.implementation;
 
-import ch.qos.logback.classic.Logger;
 import logger.utils.constants.LoggerConstants;
 
 public abstract class BaseLoggerBuilder<E, T> {
