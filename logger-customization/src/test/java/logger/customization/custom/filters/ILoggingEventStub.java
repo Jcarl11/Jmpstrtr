@@ -21,7 +21,7 @@ public class ILoggingEventStub implements ILoggingEvent {
 	@Override
 	public Level getLevel() {
 		// TODO Auto-generated method stub
-		return null;
+		return Level.INFO;
 	}
 
 	@Override
