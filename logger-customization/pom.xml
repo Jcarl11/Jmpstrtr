@@ -22,5 +22,9 @@
   		<artifactId>slf4j-api</artifactId>
   		<version>1.7.30</version>
   	</dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  	</dependency>
   </dependencies>
 </project>

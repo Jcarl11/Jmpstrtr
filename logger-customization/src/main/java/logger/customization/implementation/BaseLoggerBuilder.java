@@ -39,7 +39,7 @@ public abstract class BaseLoggerBuilder<E, T> {
 		new File(LOG_LOCATION_FLAWS).mkdirs();
 		new File(LOG_LOCATION_TRACES).mkdirs();
 	}
-	
+
 	private String getTimeStamp() {
 		Calendar currentDate = Calendar.getInstance();
 		return new SimpleDateFormat("yyyyMMddHHmmss").format(currentDate.getTime());
