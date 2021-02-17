@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Logger;
 import logger.utils.loggerEnums.LoggerImpl;
 
 public class LoggerFactory {
-	// TODO: IMPLEMENT CUSTOM EXCEPTION HERE
 
 	public static BaseLoggerBuilder<?, ? extends Logger> getLogger(LoggerImpl loggerImpl) {
 		switch (loggerImpl) {
